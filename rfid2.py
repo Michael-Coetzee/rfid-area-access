@@ -64,8 +64,13 @@ try:
                     print "Updating Exit"
                     Exited = (0,)
                     cur.execute("INSERT INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Exited))
-                    con.commit() 
-                con.commit()
+                    con.commit()
+                    # im not sure if im heading in the right direction with this todo
+                    # struggling , when i run code i get this error:
+                    # Traceback (most recent call last):
+                    # File "rfid2.py", line 66, in <module>
+                    # cur.execute("INSERT INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Exited))
+                    #  sqlite3.InterfaceError: Error binding parameter 2 - probably unsupported type.
 except KeyboardInterrupt:
     print "Caught interrupt, exiting..."
     print "Unexpected error:", sys.exc_info()[0]
