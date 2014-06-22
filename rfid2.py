@@ -26,8 +26,6 @@ cur.execute('REPLACE INTO employee values(0002, "121723560", "Martin Heneck")') 
 cur.execute('REPLACE INTO employee values(0003, "121741279", "Francois Kotze")')#example code: remove when real world application
 
 #============================================================================================================
-cur.execute('CREATE TABLE IF NOT EXISTS tracking (ID INTEGER PRIMARY KEY, Card TEXT, Date TEXT, Status INTEGER DEFAULT 0)')
-cur.execute('CREATE TABLE IF NOT EXISTS rejected (ID INTEGER PRIMARY KEY, Card TEXT, Date TEXT)')
 GPIO.output(BLUE_LED, True)
 try:
     while True:                             # loop until tag is read
