@@ -58,10 +58,10 @@ try:
                 statusResult = cur.fetchone()
                 if statusResult == (0,):
                     Entered = (1,)
-                    print "Updating Enter"
+                    print "Updating Enter" # this was just for testing can be removed
                     cur.execute("INSERT INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Entered))
                 else:
-                    print "Updating Exit"
+                    print "Updating Exit" # this was just for testing can be removed
                     Exited = (0,)
                     cur.execute("INSERT INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Exited))
                     con.commit()
