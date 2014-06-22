@@ -15,7 +15,7 @@ con = lite.connect('areaDatabase.db')       # link to database
 cur = con.cursor()              # connect to DB
 
 #create tables if they do not exist
-cur.execute('CREATE TABLE IF NOT EXISTS employee (ID INTEGER PRIMARY KEY, Card TEXT, Name TEXT)') 
+cur.execute('CREATE TABLE IF NOT EXISTS employee (ID INTEGER PRIMARY KEY, Card TEXT, Name TEXT)')
 cur.execute('CREATE TABLE IF NOT EXISTS tracking (ID INTEGER PRIMARY KEY, Card TEXT, Date TEXT, Status INTERGER DEFAULT 0)')
 cur.execute('CREATE TABLE IF NOT EXISTS rejected (ID INTEGER PRIMARY KEY, Card TEXT, Date TEXT)')
 
@@ -26,12 +26,13 @@ cur.execute('REPLACE INTO employee values(0002, "121723560", "Martin Heneck")') 
 cur.execute('REPLACE INTO employee values(0003, "121741279", "Francois Kotze")')#example code: remove when real world application
 
 #============================================================================================================
-
+cur.execute('CREATE TABLE IF NOT EXISTS tracking (ID INTEGER PRIMARY KEY, Card TEXT, Date TEXT, Status INTEGER DEFAULT 0)')
+cur.execute('CREATE TABLE IF NOT EXISTS rejected (ID INTEGER PRIMARY KEY, Card TEXT, Date TEXT)')
 GPIO.output(BLUE_LED, True)
 try:
     while True:                             # loop until tag is read
         thetime = time.strftime("%Y-%m-%d %a %H:%M:%S", time.localtime())
-        rfid_data = raw_input().strip()                        # read data from rfid
+        rfid_data = raw_input().strip()     # read data from rfid
         if  len(rfid_data) > 0:             # check data
             rfid_data = rfid_data[1:11]     # only get tag number
             print "Card Scanned. Tag ID:", rfid_data  # print number
@@ -65,7 +66,8 @@ try:
                     print "Updating Exit"
                     Exited = (0,)
                     cur.execute("INSERT INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Exited))
-                    con.commit()
+                    con.commit() 
+                con.commit()
 except KeyboardInterrupt:
     print "Caught interrupt, exiting..."
     print "Unexpected error:", sys.exc_info()[0]
