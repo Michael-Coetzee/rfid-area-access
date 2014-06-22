@@ -56,21 +56,25 @@ try:
                 print result[0],"entered area @",thetime
                 cur.execute("SELECT Status FROM tracking WHERE Card = ?", [rfid_data])
                 statusResult = cur.fetchone()
-                if statusResult == (0,):
-                    Entered = (1,)
+                print statusResult
+                if statusResult == None:
+                    Entered = 'ENTERED'
                     print "Updating Enter" # this was just for testing can be removed
-                    cur.execute("INSERT INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Entered))
+                    cur.execute("REPLACE INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Entered))
+                    cur.execute("SELECT Status FROM tracking WHERE Card = ?", [rfid_data])
+                    statusResultTwo = cur.fetchone()
+                    con.commit()
+                    print statusResultTwo
+                elif statusResult == 'EXITED':
+                    Entered = 'ENTERED'
+                    cur.execute("REPLACE INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Entered))
+                    con.commit()
                 else:
                     print "Updating Exit" # this was just for testing can be removed
-                    Exited = (0,)
-                    cur.execute("INSERT INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Exited))
+                    Exited = 'EXITED'
+                    cur.execute("REPLACE INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Exited))
                     con.commit()
-                    # im not sure if im heading in the right direction with this todo
-                    # struggling , when i run code i get this error:
-                    # Traceback (most recent call last):
-                    # File "rfid2.py", line 66, in <module>
-                    # cur.execute("INSERT INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Exited))
-                    #  sqlite3.InterfaceError: Error binding parameter 2 - probably unsupported type.
+
 except KeyboardInterrupt:
     print "Caught interrupt, exiting..."
     print "Unexpected error:", sys.exc_info()[0]
