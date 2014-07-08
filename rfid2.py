@@ -35,7 +35,7 @@ try:
                 GPIO.output(RED_LED, False)
                 GPIO.output(BLUE_LED, True)
                 print "UNAUTHORIZED CARD! [",rfid_data,"] scanned at area @ ",thetime
-                cur.execute("INSERT INTO rejected (rejectedcard, whenrejected) VALUES(?,?)", (rfid_data, thetime))
+                cur.execute("INSERT INTO rejected (Card, Date) VALUES(?,?)", (rfid_data, thetime))
                 con.commit()                # logging unauthorised card into database
                 cur.close()                 # closing DB connection
                 continue
