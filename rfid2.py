@@ -12,7 +12,6 @@ GPIO.setup(RED_LED, GPIO.OUT)
 
 con = lite.connect('areaDatabase.db')       # link to database
 
-rfid_reader = "/dev/ttyUSB0"                # link to usb port
 print "Connected to RFID:"
 
 GPIO.output(BLUE_LED, True)
