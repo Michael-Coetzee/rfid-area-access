@@ -12,8 +12,6 @@ GPIO.setup(RED_LED, GPIO.OUT)
 
 con = lite.connect('areaDatabase.db')       # link to database
 
-print "Connected to RFID:"
-
 GPIO.output(BLUE_LED, True)
 try:
     while True:                             # loop until tag is read
