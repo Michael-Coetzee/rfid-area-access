@@ -37,7 +37,6 @@ try:
                 print "UNAUTHORIZED CARD! [",rfid_data,"] scanned at area @ ",thetime
                 cur.execute("INSERT INTO rejected (Card, Date) VALUES(?,?)", (rfid_data, thetime))
                 con.commit()                # logging unauthorised card into database
-                cur.close()                 # closing DB connection
                 continue
             else:                           # if card found execute the following
                 GPIO.output(BLUE_LED, False)
@@ -47,8 +46,9 @@ try:
                 GPIO.output(BLUE_LED, True)
                 print "Card found in DB."
                 print result[0],"entered area @",thetime
-                cur.execute("INSERT INTO tracking (card, name, lastentry) VALUES(?,?,?)",    (rfid_data, result[0], thetime))
-                cur.execute("UPDATE RFID SET lastentry=(?) WHERE card=(?)",    (thetime, rfid_data))
+
+                # TODO: need to check against status and set appropriately
+                cur.execute("INSERT INTO tracking (Card, Date) VALUES(?,?)", (rfid_data, thetime))
                 # commit changes to database 
                 con.commit()
 except KeyboardInterrupt:
