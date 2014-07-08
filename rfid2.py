@@ -11,6 +11,12 @@ GPIO.setup(GREEN_LED, GPIO.OUT)
 GPIO.setup(RED_LED, GPIO.OUT)
 
 con = lite.connect('areaDatabase.db')       # link to database
+cur = con.cursor()              # connect to DB
+
+#create tables if they do not exist
+cur.execute('CREATE TABLE IF NOT EXISTS employee (ID INTEGER PRIMARY KEY, Card TEXT, Name TEXT)') 
+cur.execute('CREATE TABLE IF NOT EXISTS tracking (ID INTEGER PRIMARY KEY, Card TEXT, Date TEXT, Status INTEGER DEFAULT 0)')
+cur.execute('CREATE TABLE IF NOT EXISTS rejected (ID INTEGER PRIMARY KEY, Card TEXT, Date TEXT)')
 
 GPIO.output(BLUE_LED, True)
 try:
@@ -20,7 +26,6 @@ try:
         if  len(rfid_data) > 0:             # check data
             rfid_data = rfid_data[1:11]     # only get tag number
             print "Card Scanned. Tag ID:", rfid_data  # print number
-            cur = con.cursor()              # connect to DB
             cur.execute("select name from rfid where card = ?", [rfid_data])
             result = cur.fetchone()         # fetch name of card holder if exists
             if not result:                  # if card not found execute the following
@@ -44,11 +49,12 @@ try:
                 print result[0],"entered area @",thetime
                 cur.execute("INSERT INTO tracking (card, name, lastentry) VALUES(?,?,?)",    (rfid_data, result[0], thetime))
                 cur.execute("UPDATE RFID SET lastentry=(?) WHERE card=(?)",    (thetime, rfid_data))
-                con.commit()               # log last entry into DB and log each scan into DB for tracking
-                cur.close()
+                # commit changes to database 
+                con.commit()
 except KeyboardInterrupt:
     print "Caught interrupt, exiting..."
     print "Unexpected error:", sys.exc_info()[0]
     raise
 finally:
+    cur.close()
     GPIO.cleanup()                         # cleanup GPIO
