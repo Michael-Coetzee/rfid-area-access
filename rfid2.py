@@ -26,7 +26,7 @@ try:
         if  len(rfid_data) > 0:             # check data
             rfid_data = rfid_data[1:11]     # only get tag number
             print "Card Scanned. Tag ID:", rfid_data  # print number
-            cur.execute("select name from rfid where card = ?", [rfid_data])
+            cur.execute("SELECT Name FROM employee WHERE Card = ?", [rfid_data])
             result = cur.fetchone()         # fetch name of card holder if exists
             if not result:                  # if card not found execute the following
                 GPIO.output(BLUE_LED, False)
