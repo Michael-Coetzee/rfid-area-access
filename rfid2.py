@@ -1,4 +1,4 @@
-import serial, time, sys
+import time, sys
 import sqlite3 as lite
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
