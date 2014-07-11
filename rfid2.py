@@ -9,36 +9,50 @@ RED_LED = 23
 GPIO.setup(BLUE_LED, GPIO.OUT)
 GPIO.setup(GREEN_LED, GPIO.OUT)
 GPIO.setup(RED_LED, GPIO.OUT)
-
-con = lite.connect('areaDatabase.db')       # link to database
-cur = con.cursor()              # connect to DB
+# link to database
+con = lite.connect('areaDatabase.db')
+# connect to DB
+cur = con.cursor()              
 
 #create tables if they do not exist
 cur.execute('CREATE TABLE IF NOT EXISTS employee (ID INTEGER PRIMARY KEY, Card TEXT, Name TEXT)')
 cur.execute('CREATE TABLE IF NOT EXISTS tracking (ID INTEGER PRIMARY KEY, Card TEXT, Date DATETIME, Status INTEGER DEFAULT 0)')
 cur.execute('CREATE TABLE IF NOT EXISTS rejected (ID INTEGER PRIMARY KEY, Card TEXT, Date TEXT)')
+#example code: remove when in real world application just for testing purposes
+cur.execute('REPLACE INTO employee values(0001, "121743110", "Deon Spengler")')
+cur.execute('REPLACE INTO employee values(0002, "121723560", "Martin Heneck")')
+cur.execute('REPLACE INTO employee values(0003, "121741279", "Francois Kotze")')
 
 GPIO.output(BLUE_LED, True)
 try:
-    while True:                             # loop until tag is read
+    while True:
+        # loop until tag is read
         thetime = time.strftime("%Y-%m-%d %a %H:%M:%S", time.localtime())
-        rfid_data = raw_input().strip()     # read data from rfid
-        if  len(rfid_data) > 0:             # check data
-            rfid_data = rfid_data[1:11]     # only get tag number
-            print "Card Scanned. Tag ID:", rfid_data  # print number
+        # read data from rfid
+        rfid_data = raw_input().strip()
+        # check data
+        if  len(rfid_data) > 0:
+            # only get tag number
+            rfid_data = rfid_data[1:11]
+            # print number
+            print "Card Scanned. Tag ID:", rfid_data  
             cur.execute("SELECT Card, Name FROM employee WHERE Card = ?", [rfid_data])
-            employee = cur.fetchone()       # fetch name of card holder if exists
-            if not employee:                # if card not found execute the following code
+            # fetch name of card holder if exists
+            employee = cur.fetchone()
+            # if card not found execute the following code
+            if not employee:                
                 GPIO.output(BLUE_LED, False)
                 GPIO.output(RED_LED, True)
                 time.sleep(2)
                 GPIO.output(RED_LED, False)
                 GPIO.output(BLUE_LED, True)
                 print "UNAUTHORIZED CARD! [",rfid_data,"] scanned at area @ ",thetime
+                # logging unauthorised card into database
                 cur.execute("INSERT INTO rejected (Card, Date) VALUES(?,?)", (rfid_data, thetime))
-                con.commit()                # logging unauthorised card into database
+                con.commit()                
                 continue
-            else:                           # if card found execute the following
+                # if card found execute the following
+            else:                           
                 GPIO.output(BLUE_LED, False)
                 GPIO.output(GREEN_LED, True)
                 time.sleep(2)
@@ -65,5 +79,7 @@ except KeyboardInterrupt:
     print "Unexpected error:", sys.exc_info()[0]
     raise
 finally:
+    # close connection
     cur.close()
-    GPIO.cleanup()                         # cleanup GPIO
+     # cleanup GPIO
+    GPIO.cleanup()                        
