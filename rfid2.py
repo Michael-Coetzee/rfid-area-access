@@ -1,7 +1,6 @@
 import time, sys
 import sqlite3 as lite
 import RPi.GPIO as GPIO
-from itertools import cycle
 GPIO.setmode(GPIO.BCM)
 
 GREEN_LED = 18
@@ -16,16 +15,9 @@ cur = con.cursor()              # connect to DB
 
 #create tables if they do not exist
 cur.execute('CREATE TABLE IF NOT EXISTS employee (ID INTEGER PRIMARY KEY, Card TEXT, Name TEXT)')
-cur.execute('CREATE TABLE IF NOT EXISTS tracking (ID INTEGER PRIMARY KEY, Card TEXT, Date TEXT, Status INTERGER DEFAULT 0)')
+cur.execute('CREATE TABLE IF NOT EXISTS tracking (ID INTEGER PRIMARY KEY, Card TEXT, Date DATETIME, Status INTEGER DEFAULT 0)')
 cur.execute('CREATE TABLE IF NOT EXISTS rejected (ID INTEGER PRIMARY KEY, Card TEXT, Date TEXT)')
 
-#============================================================================================================
-
-cur.execute('REPLACE INTO employee values(0001, "121743110", "Deon Spengler")') #example code: remove when real world application
-cur.execute('REPLACE INTO employee values(0002, "121723560", "Martin Heneck")') #example code: remove when real world application
-cur.execute('REPLACE INTO employee values(0003, "121741279", "Francois Kotze")')#example code: remove when real world application
-
-#============================================================================================================
 GPIO.output(BLUE_LED, True)
 try:
     while True:                             # loop until tag is read
@@ -34,9 +26,9 @@ try:
         if  len(rfid_data) > 0:             # check data
             rfid_data = rfid_data[1:11]     # only get tag number
             print "Card Scanned. Tag ID:", rfid_data  # print number
-            cur.execute("SELECT Name FROM employee WHERE Card = ?", [rfid_data])
-            result = cur.fetchone()         # fetch name of card holder if exists
-            if not result:                  # if card not found execute the following
+            cur.execute("SELECT Card, Name FROM employee WHERE Card = ?", [rfid_data])
+            employee = cur.fetchone()       # fetch name of card holder if exists
+            if not employee:                # if card not found execute the following code
                 GPIO.output(BLUE_LED, False)
                 GPIO.output(RED_LED, True)
                 time.sleep(2)
@@ -53,27 +45,20 @@ try:
                 GPIO.output(GREEN_LED, False)
                 GPIO.output(BLUE_LED, True)
                 print "Card found in DB."
-                print result[0],"entered area @",thetime
-                cur.execute("SELECT Status FROM tracking WHERE Card = ?", [rfid_data])
-                statusResult = cur.fetchone()
-                print statusResult
-                if statusResult == None:
-                    Entered = 'ENTERED'
-                    print "Updating Enter" # this was just for testing can be removed
-                    cur.execute("REPLACE INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Entered))
-                    cur.execute("SELECT Status FROM tracking WHERE Card = ?", [rfid_data])
-                    statusResultTwo = cur.fetchone()
-                    con.commit()
-                    print statusResultTwo
-                elif statusResult == 'EXITED':
-                    Entered = 'ENTERED'
-                    cur.execute("REPLACE INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Entered))
-                    con.commit()
-                else:
-                    print "Updating Exit" # this was just for testing can be removed
-                    Exited = 'EXITED'
-                    cur.execute("REPLACE INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, thetime, Exited))
-                    con.commit()
+
+                # get last record for card
+                cur.execute("SELECT Status FROM tracking WHERE Card = ? ORDER BY datetime(Date) DESC LIMIT 1", [employee[0]])
+                employeeStatus = cur.fetchone()
+
+                if not employeeStatus or employeeStatus[0] == 0:
+                    cur.execute("INSERT INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, time.time(), 1))
+                    print employee[1],"entered area @", thetime
+                elif employeeStatus[0] == 1:
+                    cur.execute("INSERT INTO tracking (Card, Date, Status) VALUES(?,?,?)", (rfid_data, time.time(), 0))
+                    print employee[1],"left area @", thetime
+
+                # commit changes to database 
+                con.commit()
 
 except KeyboardInterrupt:
     print "Caught interrupt, exiting..."
