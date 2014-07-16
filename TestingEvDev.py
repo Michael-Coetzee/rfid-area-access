@@ -29,7 +29,13 @@ for event in dev.read_loop():
                 card = ""
                 code = []
 
-
+''' What im trying to achieve is to eventually
+replace raw_input from rfid2.py with this code
+not only will it make the card swipe more secure,
+i will eventually be able to use as many card
+readers needed and still distinguish betwwen them,
+i may or may not be on the right path with this,
+a hint would be nice... anyone'''
             
 
                     
