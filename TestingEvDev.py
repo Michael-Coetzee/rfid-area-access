@@ -18,23 +18,21 @@ for event in dev.read_loop():
             if event.code != 96:
                 try:
                     code.append(keys[event.code])
-                    if len(code) > 0:
+                    if len(code) >= 10:
                         card = "".join(map(str, code))
                         print "Card scanned. tag ID:", card
+                        card = ""
+                        code = []
+                        break
                 except:
-                    code.append('-')
+                    code.append('')
             else:
                 card = "".join(map(str, code))
                 print card
                 card = ""
                 code = []
 
-''' What im trying to achieve is to eventually
-replace raw_input from rfid2.py with this code
-not only will it make the card swipe more secure,
-i will eventually be able to use as many card
-readers needed and still distinguish between them,
-i may or may not be on the right path with this'''
+
             
 
                     
