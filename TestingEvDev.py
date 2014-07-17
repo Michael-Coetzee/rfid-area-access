@@ -21,23 +21,10 @@ for event in dev.read_loop():
                     if len(code) >= 10:
                         card = "".join(map(str, code))
                         print "Card scanned. tag ID:", card
-<<<<<<< HEAD
-                        card = ""
-                        code = []
-                        break
-=======
-                        # If card Is scannned agaIn code wIll append and gIve you a false value, cleanIng up needed
-                        card = ""
-                        code = []
->>>>>>> 857b2d8cb4bd53ca83193b188d066be25dac627d
                 except:
                     code.append('')
-            else:
-                card = "".join(map(str, code))
-                print card
-                card = ""
-                code = []
-
+                    code = []
+                    card = ""
 
             
 
