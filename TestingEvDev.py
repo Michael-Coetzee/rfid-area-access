@@ -21,6 +21,8 @@ for event in dev.read_loop():
                     if len(code) >= 10:
                         card = "".join(map(str, code))
                         print "Card scanned. tag ID:", card
+                        card = ""
+                        code = []
                 except:
                     code.append('-')
             else:
