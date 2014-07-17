@@ -18,7 +18,7 @@ for event in dev.read_loop():
             if event.code != 96:
                 try:
                     code.append(keys[event.code])
-                    if len(code) > 0:
+                    if len(code) >= 10:
                         card = "".join(map(str, code))
                         print "Card scanned. tag ID:", card
                 except:
