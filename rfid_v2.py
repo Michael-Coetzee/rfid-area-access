@@ -19,9 +19,9 @@ cur.execute('CREATE TABLE IF NOT EXISTS employee (ID INTEGER PRIMARY KEY, Card T
 cur.execute('CREATE TABLE IF NOT EXISTS tracking (ID INTEGER PRIMARY KEY, Card TEXT, Date DATETIME, Status INTEGER DEFAULT 0)')
 cur.execute('CREATE TABLE IF NOT EXISTS rejected (ID INTEGER PRIMARY KEY, Card TEXT, Date TEXT)')
 #example code: remove when in real world application just for testing purposes
-cur.execute('REPLACE INTO employee values(0001, "121743110", "Deon Spengler")')
-cur.execute('REPLACE INTO employee values(0002, "121723560", "Martin Heneck")')
-cur.execute('REPLACE INTO employee values(0003, "121741279", "Francois Kotze")')
+cur.execute('REPLACE INTO employee values(0001, "121743110", "Jack Aranda")')
+cur.execute('REPLACE INTO employee values(0002, "121723560", "Cherry Blossom")')
+cur.execute('REPLACE INTO employee values(0003, "121741279", "Olive Tree")')
 
 GPIO.output(BLUE_LED, True)
 try:
