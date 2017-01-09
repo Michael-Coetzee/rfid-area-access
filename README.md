@@ -1,6 +1,5 @@
 /* USB RFID readers, using a Raspberry Pi, that logs into a sqlite DB.
  *
- * Deon Spengler <dspengler@melbro.co.za>
  * Michael Coetzee <michaelcoetzee146@gmail.com>
  * 
  * This code is free software; you can redistribute it and/or modify
