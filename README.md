@@ -67,5 +67,3 @@ So i think we could expand on this project a little more... maybe a relay for a 
 for more secure area's of the building, iris scanner, facial recognition, anti loitering scanner... the possibilities are endless.
 :) 
               
-              
-
